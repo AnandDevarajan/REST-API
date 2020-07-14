@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
+const { check, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 
 //@router   GET
@@ -34,26 +35,37 @@ router.get('/product/:id', (req, res) => {
 //@router   POST
 //@desc     to create a product
 //@access   PRIVATE
-router.post('/product', (req, res) => {
-  const { name, price } = req.body;
-  const product = new Product({
-    _id: new mongoose.Types.ObjectId(),
-    name,
-    price,
-  });
-  product
-    .save()
-    .then(
-      res.json({
-        message: 'Product Created Successfully',
-        product,
-      })
-    )
-    .catch(
-      res.status(400).json({
-        error: 'Product creation Failed',
-      })
-    );
-});
+router.post(
+  '/product',
+  [
+    check('name', 'Name is required').notEmpty(),
+    check('price', 'Price is required').notEmpty(),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ error: errors.array()[0].msg });
+    }
+    const { name, price } = req.body;
+    const product = new Product({
+      _id: new mongoose.Types.ObjectId(),
+      name,
+      price,
+    });
+    product
+      .save()
+      .then(
+        res.json({
+          message: 'Product Created Successfully',
+          product,
+        })
+      )
+      .catch(
+        res.status(400).json({
+          error: 'Product creation Failed',
+        })
+      );
+  }
+);
 
 module.exports = router;
