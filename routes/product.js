@@ -20,16 +20,26 @@ router.get('/product', (req, res) => {
 //@router   GET
 //@desc     to get an individual product
 //@access   PUBLIC
-router.get('/product/:id', (req, res) => {});
+router.get('/product/:id', (req, res) => {
+  Product.findById(req.params.id).exec((err, product) => {
+    if (!product) {
+      return res.status(500).json({
+        message: 'Product Not Found',
+      });
+    }
+    return res.json(product);
+  });
+});
 
 //@router   POST
 //@desc     to create a product
 //@access   PRIVATE
 router.post('/product', (req, res) => {
+  const { name, price } = req.body;
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
-    name: req.body.name,
-    price: req.body.price,
+    name,
+    price,
   });
   product
     .save()
