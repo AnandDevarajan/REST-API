@@ -23,8 +23,8 @@ router.get('/product', (req, res) => {
 //@access   PUBLIC
 router.get('/product/:id', (req, res) => {
   Product.findById(req.params.id).exec((err, product) => {
-    if (!product) {
-      return res.status(500).json({
+    if (err) {
+      return res.status(400).json({
         message: 'Product Not Found',
       });
     }
@@ -67,5 +67,42 @@ router.post(
       );
   }
 );
+
+//@router   PUT
+//@desc     to update a product
+//@access   PRIVATE
+router.put('/product/:id', (req, res) => {
+  Product.findByIdAndUpdate(
+    req.params.id,
+    { $set: req.body },
+    { new: true }
+  ).exec((err, product) => {
+    if (err) {
+      return res.status(400).json({
+        message: 'Product failed to update',
+      });
+    }
+    return res.json({
+      message: 'Product updated successfully',
+      product,
+    });
+  });
+});
+
+//@router   DELETE
+//@desc     to delete a product
+//@access   PRIVATE
+router.delete('/product/:id', (req, res) => {
+  Product.findByIdAndRemove(req.params.id).exec((err, product) => {
+    if (err) {
+      return res.status(400).json({
+        message: 'Failed to delete the product',
+      });
+    }
+    return res.json({
+      message: 'Product deleted successfully',
+    });
+  });
+});
 
 module.exports = router;
