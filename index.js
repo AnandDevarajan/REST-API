@@ -21,6 +21,6 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/api', productRoutes);
-app.use('/api', orderRoutes);
+// app.use('/api', orderRoutes);
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
