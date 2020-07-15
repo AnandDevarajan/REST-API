@@ -9,7 +9,7 @@ const Order = require('../models/Order');
 //@access   PRIVATE
 router.post(
   '/order',
-  [check('id', 'Product id is empty').not().isEmpty()],
+  [check('id', 'Product id is empty').notEmpty()],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -25,7 +25,7 @@ router.post(
       .save()
       .then(
         res.json({
-          message: 'Order created successfully', 
+          message: 'Order created successfully',
           order,
         })
       )
