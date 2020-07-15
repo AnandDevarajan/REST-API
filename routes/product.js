@@ -8,14 +8,16 @@ const mongoose = require('mongoose');
 //@desc     to get all products
 //@access   PUBLIC
 router.get('/product', (req, res) => {
-  Product.find().exec((err, products) => {
-    if (err) {
-      return res.status(400).json({
-        error: 'Products Not Found',
-      });
-    }
-    return res.json(products);
-  });
+  Product.find()
+    .select('-__v')
+    .exec((err, products) => {
+      if (err) {
+        return res.status(400).json({
+          error: 'Products Not Found',
+        });
+      }
+      return res.json(products);
+    });
 });
 
 //@router   GET
@@ -39,7 +41,7 @@ router.post(
   '/product',
   [
     check('name', 'Name is required').notEmpty(),
-    check('price', 'Price is required').notEmpty(),
+    check('price', 'Price is required').notEmpty().isNumeric(),
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -72,21 +74,19 @@ router.post(
 //@desc     to update a product
 //@access   PRIVATE
 router.put('/product/:id', (req, res) => {
-  Product.findByIdAndUpdate(
-    req.params.id,
-    { $set: req.body },
-    { new: true }
-  ).exec((err, product) => {
-    if (err) {
-      return res.status(400).json({
-        message: 'Product failed to update',
+  Product.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
+    .select('-__v')
+    .exec((err, product) => {
+      if (err) {
+        return res.status(400).json({
+          message: 'Product failed to update',
+        });
+      }
+      return res.json({
+        message: 'Product updated successfully',
+        product,
       });
-    }
-    return res.json({
-      message: 'Product updated successfully',
-      product,
     });
-  });
 });
 
 //@router   DELETE
