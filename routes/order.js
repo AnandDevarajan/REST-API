@@ -100,7 +100,7 @@ router.put('/order/:id', (req, res) => {
 //@access   PRIVATE
 router.delete('/order/:id', (req, res) => {
   Order.findByIdAndRemove(req.params.id).exec((err, order) => {
-    if (err) {
+    if (!order) {
       res.status(400).json({
         message: 'Failed to delete the order',
       });

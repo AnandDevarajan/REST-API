@@ -94,7 +94,7 @@ router.put('/product/:id', (req, res) => {
 //@access   PRIVATE
 router.delete('/product/:id', (req, res) => {
   Product.findByIdAndRemove(req.params.id).exec((err, product) => {
-    if (err) {
+    if (!product) {
       return res.status(400).json({
         message: 'Failed to delete the product',
       });
