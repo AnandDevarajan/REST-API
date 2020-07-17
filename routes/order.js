@@ -71,5 +71,36 @@ router.post(
       });
   }
 );
+//@router   PUT
+//@desc     to update an order
+//@access   PRIVATE
+router.put('/order/:id', (req, res) => {
+  Order.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
+    .select('-__v')
+    .exec((err, order) => {
+      if (err) {
+        return res.status(400).json({
+          message: 'Failed to update the order',
+        });
+      }
+      res.json({
+        message: 'Order updated successfully',
+        order,
+      });
+    });
+});
 
+//@router   DELETE
+//@desc     to delete an order
+//@access   PRIVATE
+router.delete('/order/:id', (req, res) => {
+  Order.findByIdAndRemove(req.params.id).exec((err, order) => {
+    if (err) {
+      res.status(400).json({
+        message: 'Failed to delete the order',
+      });
+    }
+    res.json(order);
+  });
+});
 module.exports = router;
