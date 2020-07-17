@@ -16,8 +16,13 @@ router.get('/order', (req, res) => {
           message: 'No Order found',
         });
       }
-      return res.json({
+      let count = 0;
+      orders.map((order) => {
+        count += 1;
+      });
+      res.json({
         message: 'Your Orders',
+        count,
         orders,
       });
     });
