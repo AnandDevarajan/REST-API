@@ -10,6 +10,7 @@ const Order = require('../models/Order');
 router.get('/order', (req, res) => {
   Order.find()
     .select('-__v')
+    .populate('product', '-__v')
     .exec((err, orders) => {
       if (err) {
         return res.status(400).json({
@@ -34,6 +35,7 @@ router.get('/order', (req, res) => {
 router.get('/order/:id', (req, res) => {
   Order.findById(req.params.id)
     .select('-__v')
+    .populate('product', '-__v')
     .exec((err, order) => {
       if (err) {
         return res.status(400).json({
