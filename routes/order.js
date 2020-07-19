@@ -39,7 +39,7 @@ router.get('/order/:id', (req, res) => {
     .exec((err, order) => {
       if (err) {
         return res.status(400).json({
-          message: 'Order not found',
+          message: 'Order Not Found',
         });
       }
       res.json(order);
