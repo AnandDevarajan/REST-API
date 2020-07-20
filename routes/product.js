@@ -78,6 +78,7 @@ router.post(
       _id: new mongoose.Types.ObjectId(),
       name,
       price,
+      productImage: req.file.path,
     });
     product
       .save()
