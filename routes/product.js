@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
 const { check, validationResult } = require('express-validator');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 const mongoose = require('mongoose');
 
 //@router   GET
@@ -43,7 +45,9 @@ router.post(
     check('name', 'Name is required').notEmpty(),
     check('price', 'Price is required').notEmpty().isNumeric(),
   ],
+  upload.single('productImage'),
   (req, res) => {
+    console.log(req.file);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ error: errors.array()[0].msg });
