@@ -6,23 +6,25 @@ const { check, validationResult } = require('express-validator');
 const multer = require('multer');
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, '../uploads');
+    cb(null, './uploads/');
   },
   filename: function (req, file, cb) {
     cb(null, new Date().toISOString() + file.originalname);
   },
 });
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-    return cb(null, true);
+  if (file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    cb(null, false);
   }
-  cb(null, false);
 };
 const upload = multer({
-  dest: 'uploads/',
   storage: storage,
   fileFilter: fileFilter,
-  limits: 1024 * 1024 * 3,
+  limits: {
+    fileSize: 1024 * 1024 * 3,
+  },
 });
 
 //@router   GET
