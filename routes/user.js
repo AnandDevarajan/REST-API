@@ -20,35 +20,39 @@ router.post(
       return res.status(422).json({ errors: errors.array()[0].msg });
     }
     const { name, email, password } = req.body;
-    User.find({ email }).exec((err, user) => {
-      if (user) {
-        return res.status(422).json({
-          message: 'User already existed',
-        });
-      }
-    });
-    bcrypt.hash(password, 10, (err, hash) => {
-      if (err) {
-        return res.status(500).json({
-          error: err,
-        });
-      } else {
-        const user = new User({
-          _id: new mongoose.Types.ObjectId(),
-          name,
-          email,
-          password: hash,
-        });
-        user.save((err) => {
-          if (err) {
-            return res.status(400).json({
-              message: 'Failed to create user',
-            });
-          }
-          res.json({ message: 'User created successfully' });
-        });
-      }
-    });
+    User.find({ email })
+      .exec()
+      .then((user) => {
+        if (user.length >= 1) {
+          return res.status(422).json({
+            message: 'User already exists',
+          });
+        } else {
+          bcrypt.hash(password, 10, (err, hash) => {
+            if (err) {
+              return res.status(500).json({
+                error: err,
+              });
+            } else {
+              const user = new User({
+                _id: new mongoose.Types.ObjectId(),
+                name,
+                email,
+                password: hash,
+              });
+              user.save((err) => {
+                if (err) {
+                  return res.status(400).json({
+                    message: 'Failed to create user',
+                  });
+                }
+                res.json({ message: 'User created successfully' });
+              });
+            }
+          });
+        }
+      })
+      .catch();
   }
 );
 
