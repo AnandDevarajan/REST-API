@@ -20,6 +20,13 @@ router.post(
       return res.status(422).json({ errors: errors.array()[0].msg });
     }
     const { name, email, password } = req.body;
+    User.find({ email }).exec((err, user) => {
+      if (user) {
+        return res.status(422).json({
+          message: 'User already existed',
+        });
+      }
+    });
     bcrypt.hash(password, 10, (err, hash) => {
       if (err) {
         return res.status(500).json({
@@ -32,14 +39,14 @@ router.post(
           email,
           password: hash,
         });
-        user
-          .save()
-          .then(res.json({ message: 'User created successfully' }))
-          .catch((err) => {
-            res.status(400).json({
-              error: 'Failed to create the user',
+        user.save((err) => {
+          if (err) {
+            return res.status(400).json({
+              message: 'Failed to create user',
             });
-          });
+          }
+          res.json({ message: 'User created successfully' });
+        });
       }
     });
   }
