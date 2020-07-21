@@ -52,8 +52,24 @@ router.post(
           });
         }
       })
-      .catch();
+      .catch((err) => {
+        res.status(400).json({
+          err,
+        });
+      });
   }
 );
 
+router.post('/user:id', (req, res) => {
+  User.findOneAndRemove(req.params.id).exec((err, user) => {
+    if (err) {
+      return req.status(400).json({
+        message: 'Failed to delete the user',
+      });
+    }
+    req.json({
+      message: 'User Deleted Successfully',
+    });
+  });
+});
 module.exports = router;
