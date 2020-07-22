@@ -66,7 +66,33 @@ router.post(
 //@route  POST
 //@desc   to login a user
 //@access PUBLIC
-
+router.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  User.findOne({ email })
+    .exec()
+    .then((user) => {
+      if (!user) {
+        res.status(400).json({
+          message: 'ACCESS DENIED',
+        });
+      }
+      bcrypt.compare(password, user.password).then((err, result) => {
+        if (err) {
+          return res.status(401).json({
+            message: 'ACCESS DENIED',
+          });
+        }
+        if (result) {
+          res.json({
+            message: 'Logged In Successfully',
+          });
+        }
+      });
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+});
 //@route  POST
 //@desc   to delete a user
 //@access PRIVATE
