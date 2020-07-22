@@ -68,23 +68,23 @@ router.post(
 //@access PUBLIC
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
-  User.findOne({ email })
+  User.find({ email })
     .exec()
     .then((user) => {
-      if (!user) {
-        res.status(400).json({
+      if (user.length < 1) {
+        return res.status(400).json({
           message: 'ACCESS DENIED',
         });
       }
-      bcrypt.compare(password, user.password).then((err, result) => {
+      bcrypt.compare(password, user[0].password, (err, result) => {
         if (err) {
           return res.status(401).json({
             message: 'ACCESS DENIED',
           });
         }
         if (result) {
-          res.json({
-            message: 'Logged In Successfully',
+          return res.json({
+            message: 'User Logged in successfully',
           });
         }
       });
