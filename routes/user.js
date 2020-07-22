@@ -5,6 +5,9 @@ const { check, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+//@route  POST
+//@desc   to sign up a user
+//@access PUBLIC
 router.post(
   '/signup',
   [
@@ -60,6 +63,13 @@ router.post(
   }
 );
 
+//@route  POST
+//@desc   to login a user
+//@access PUBLIC
+
+//@route  POST
+//@desc   to delete a user
+//@access PRIVATE
 router.post('/user:id', (req, res) => {
   User.findOneAndRemove(req.params.id).exec((err, user) => {
     if (err) {
