@@ -4,6 +4,7 @@ const User = require('../models/User');
 const { check, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 //@route  POST
 //@desc   to sign up a user
@@ -68,23 +69,29 @@ router.post(
 //@access PUBLIC
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
-  User.find({ email })
+  User.findOne({ email })
     .exec()
     .then((user) => {
-      if (user.length < 1) {
+      if (!user) {
         return res.status(400).json({
           message: 'ACCESS DENIED',
         });
       }
-      bcrypt.compare(password, user[0].password, (err, result) => {
+      bcrypt.compare(password, user.password, (err, result) => {
         if (err) {
           return res.status(401).json({
             message: 'ACCESS DENIED',
           });
         }
         if (result) {
+          const token = jwt.sign(
+            { email: user.email, id: user.id },
+            process.env.SECRET,
+            { expiresIn: '1h' }
+          );
           return res.json({
             message: 'User Logged in successfully',
+            token,
           });
         }
       });
